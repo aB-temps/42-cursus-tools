@@ -50,7 +50,7 @@ $(foreach comp,$(COMPONENTS),$(eval $(call generate_var_sources,$(comp))))
 # OBJECTS =============================================================================
 $(foreach comp,$(COMPONENTS),$(eval $(call generate_var_objects,$(comp))))
 
-OBJECTS := $(foreach comp, $(COMPONENTS), $(OBJ_$(comp))) \
+OBJECTS := 	$(foreach comp, $(COMPONENTS), $(OBJ_$(comp))) \
 			$(DIR_OBJ)main.o
 
 $(DIR_OBJ):
