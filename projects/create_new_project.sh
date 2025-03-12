@@ -33,7 +33,7 @@ create_project_and_alias() {
 	local full_path="${projects_dir}/${dir_name}"
 
 	# Archi vars
-	local src="${full_path}/src"
+	local src="${full_path}/sources"
 	local inc="${full_path}/includes"
 	local main="${src}/main.c"
 	local hdr="${inc}/${project_name}.h"
