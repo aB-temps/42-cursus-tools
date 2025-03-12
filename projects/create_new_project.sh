@@ -56,6 +56,7 @@ create_project_and_alias() {
 				cp "$HOME/42-cursus-tools/assets/Makefile" $full_path
 				sed -i "s/# NAME = XXXXXX/NAME = $project_name/g" $full_path/Makefile
 				cd $full_path && git clone git@github.com:aB-temps/lib-improved.git
+				cd lib-improved && rm -rf .git
 			fi
 		fi
 
