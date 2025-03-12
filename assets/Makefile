@@ -26,14 +26,16 @@ endef
 
 F_LIB = $(addsuffix .a, $(LIB_NAME))
 
+F_MAIN :=		main.c
+
 F_XXXXX :=		xxxxx.c
 
 # DIR ==================================================================================
-DIR_INC = include/
+DIR_INC = includes/
 DIR_LIB = $(LIB_NAME)/
 DIR_LIB_INC = $(addprefix $(DIR_LIB), $(DIR_INC))
 DIR_SRC = src/
-DIR_OBJ = $(addsuffix objects, $(DIR_SRC))
+DIR_OBJ = objects/
 $(foreach comp,$(COMPONENTS),$(eval $(call generate_var_sources_dir,$(comp))))
 
 # INCLUDE ==============================================================================
@@ -48,7 +50,8 @@ $(foreach comp,$(COMPONENTS),$(eval $(call generate_var_sources,$(comp))))
 # OBJECTS =============================================================================
 $(foreach comp,$(COMPONENTS),$(eval $(call generate_var_objects,$(comp))))
 
-OBJECTS := $(foreach comp, $(COMPONENTS), $(OBJ_$(comp)))
+OBJECTS := $(foreach comp, $(COMPONENTS), $(OBJ_$(comp))) \
+			$(DIR_OBJ)/main.o
 
 $(DIR_OBJ):
 	mkdir -p $@
