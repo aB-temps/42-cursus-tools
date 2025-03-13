@@ -4,7 +4,7 @@ CFLAGS = -Wall -Werror -Wextra -g3
 INC_FLAGS = -I $(DIR_INC) -I $(DIR_LIB_INC)
 ALL_FLAGS = $(CFLAGS) $(INC_FLAGS)
 # NAME = XXXXXX
-LIB_NAME = lib-improved
+LIB_NAME = lib_improved
 # .SILENT:
 
 # COMPONENTS =============================================================================
