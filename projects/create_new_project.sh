@@ -67,7 +67,8 @@ create_project_and_alias() {
 			if [[ $? -eq 0 ]]; then
 				if [[ $mlx = 'y' ]]; then
 					cd $full_path && git clone https://github.com/42paris/minilibx-linux.git
-					cd minilibx-linux && rm -rf .git && rm -rf .github
+					mv minilibx-linux mlx_linux
+					cd mlx_linux && rm -rf .git && rm -rf .github
 					mk="Makefile_mlx.mk"
 				fi
 				cp "$HOME/42-cursus-tools/assets/${mk}" $full_path
