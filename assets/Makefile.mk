@@ -21,7 +21,7 @@ SRC_$(1) = $$(addprefix $$(DIR_$(1)),$$(F_$(1)))
 endef
 
 define generate_var_objects
-OBJ_$(1) = $$(patsubst $$(DIR_SRC)%.c,$$(DIR_OBJ)/%.o,$$(SRC_$(1)))
+OBJ_$(1) = $$(patsubst $$(DIR_SRC)%.c,$$(DIR_OBJ)%.o,$$(SRC_$(1)))
 endef
 
 # FILES ==================================================================================
