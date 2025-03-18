@@ -26,6 +26,17 @@ create_project_and_alias() {
 		echo "❌ Error: just say [y]es or [n]o. ❌"
 		return 1
 	fi
+
+	#mlx?
+	if [[ $archi = "y" ]]; then
+		echo -n "➡️  Do you need the MiniLibX ? [y/n] ? "
+		read mlx
+		if [[ $mlx != "y" && $mlx != "n" ]]; then
+			echo "❌ Error: just say [y]es or [n]o. ❌"
+			return 1
+		fi
+	fi
+
 	echo "\n"
 
 	# Dir vars
@@ -37,6 +48,7 @@ create_project_and_alias() {
 	local inc="${full_path}/includes"
 	local main="${src}/main.c"
 	local hdr="${inc}/${project_name}.h"
+	local mk="Makefile.mk"
 
 	# Create the directory
 	mkdir -p "$full_path"
@@ -53,11 +65,17 @@ create_project_and_alias() {
 		if [[ $archi = 'y' ]]; then
 			mkdir -p "$src" && mkdir -p $inc && touch $main && touch $hdr && echo "#include \"${project_name}.h\"\n\nint\tmain(void)\n{\n\n\treturn (0);\n}" >>$main
 			if [[ $? -eq 0 ]]; then
-				cp "$HOME/42-cursus-tools/assets/Makefile" $full_path
-				sed -i "s/# NAME = XXXXXX/NAME = $project_name/g" $full_path/Makefile
-				cd $full_path && git clone git@github.com:aB-temps/lib-improved.git
+				if [[ $mlx = 'y' ]]; then
+					cd $full_path && git clone https://github.com/42paris/minilibx-linux.git
+					cd minilibx-linux && rm -rf .git && rm -rf .github
+					mk="Makefile_mlx.mk"
+				fi
+				cp "$HOME/42-cursus-tools/assets/${mk}" $full_path
+				sed -i "s/# NAME = XXXXXX/NAME = $project_name/g" $full_path/${mk}
+				mv ${full_path}/${mk} ${full_path}/Makefile 
+				cd ${full_path} && git clone git@github.com:aB-temps/lib-improved.git
 				cd lib-improved && rm -rf .git
-				echo ".objects/\\nlib-improved/\\n$project_name" > $full_path/.gitignore
+				echo ".objects/\\nlib-improved/\\n$project_name" >$full_path/.gitignore
 			fi
 		fi
 
