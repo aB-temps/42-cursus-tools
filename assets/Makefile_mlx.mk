@@ -5,7 +5,7 @@ INC_FLAGS = -I $(DIR_INC) -I $(DIR_LIB_INC) -I/usr/include -Imlx_linux
 MLX_INC = -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 ALL_FLAGS = $(CFLAGS) $(INC_FLAGS)
 # NAME = XXXXXX
-LIB_NAME = lib_improved
+LIB_NAME = lib-improved
 # .SILENT:
 
 # COMPONENTS =============================================================================
