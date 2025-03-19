@@ -71,9 +71,11 @@ all : lib mlx $(NAME)
 
 lib :
 	make -C $(DIR_LIB)
+	@echo ✨ $(LIB_NAME) compiled ✨
 
 mlx :
-	make -C $(MLX_NAME)
+	make -C $(DIR_MLX)
+	@echo ✨ $(MLX_NAME) compiled ✨
 
 $(NAME): $(DIR_OBJ) $(OBJECTS) $(DIR_LIB)$(F_LIB)
 	$(CC) $(ALL_FLAGS) -o $@ $(OBJECTS) -L$(DIR_LIB) -l$(patsubst lib%.a,%,$(F_LIB)) $(MLX_INC)
