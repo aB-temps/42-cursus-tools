@@ -2,10 +2,11 @@
 CC = cc
 CFLAGS = -Wall -Werror -Wextra -g3
 INC_FLAGS = -I $(DIR_INC) -I $(DIR_LIB_INC) -I/usr/include -Imlx_linux 
-MLX_INC = -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
+MLX_INC = -L$(MLX_NAME) -lmlx_Linux -L/usr/lib -I$(MLX_NAME) -lXext -lX11 -lm -lz
 ALL_FLAGS = $(CFLAGS) $(INC_FLAGS)
 # NAME = XXXXXX
 LIB_NAME = lib-improved
+MLX_NAME = mlx_linux
 # .SILENT:
 
 # COMPONENTS =============================================================================
@@ -36,6 +37,7 @@ F_XXXXX :=		xxxxx.c
 # DIR ==================================================================================
 DIR_INC = includes/
 DIR_LIB = $(LIB_NAME)/
+DIR_MLX = $(MLX_NAME)/
 DIR_LIB_INC = $(addprefix $(DIR_LIB), $(DIR_INC))
 DIR_SRC = sources/
 DIR_OBJ = .objects/
@@ -65,10 +67,13 @@ $(DIR_OBJ)%.o: $(DIR_SRC)%.c $(DIR_INC)* $(DIR_LIB_INC)*
 
 # RULES ===============================================================================
 # make --------------------------------------------------------------------------------
-all : lib $(NAME)
+all : lib mlx $(NAME)
 
 lib :
 	make -C $(DIR_LIB)
+
+mlx :
+	make -C $(MLX_NAME)
 
 $(NAME): $(DIR_OBJ) $(OBJECTS) $(DIR_LIB)$(F_LIB)
 	$(CC) $(ALL_FLAGS) -o $@ $(OBJECTS) -L$(DIR_LIB) -l$(patsubst lib%.a,%,$(F_LIB)) $(MLX_INC)
@@ -76,10 +81,12 @@ $(NAME): $(DIR_OBJ) $(OBJECTS) $(DIR_LIB)$(F_LIB)
 
 clean:
 	make clean -C $(DIR_LIB)
+	make clean -C $(DIR_MLX)
 	rm -rf $(DIR_OBJ)
 
 fclean: clean
 	make fclean -C $(DIR_LIB)
+	make clean -C $(DIR_MLX)
 	rm -f $(NAME)
 	
 re: fclean all
