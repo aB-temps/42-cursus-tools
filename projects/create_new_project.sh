@@ -72,7 +72,7 @@ create_project_and_alias() {
 					mk="Makefile_mlx.mk"
 				fi
 				cp "$HOME/42-cursus-tools/assets/${mk}" $full_path
-				sed -i "s/# NAME = XXXXXX/NAME = $project_name/g" $full_path/${mk}
+				sed -i "s/# NAME = <NAME OF YOUR PROGRAM>/NAME = $project_name/g" $full_path/${mk}
 				mv ${full_path}/${mk} ${full_path}/Makefile 
 				cd ${full_path} && git clone git@github.com:aB-temps/lib_improved.git
 				cd lib_improved && rm -rf .git

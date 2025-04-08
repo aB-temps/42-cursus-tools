@@ -1,103 +1,110 @@
-# GENERAL SETTINGS =======================================================================
-CC = cc
-CFLAGS = -Wall -Werror -Wextra -g3
-INC_FLAGS = -I $(DIR_INC) -I $(DIR_LIB_INC) -I/usr/include -Imlx_linux 
-MLX_INC = -L$(MLX_NAME) -lmlx_Linux -L/usr/lib -I$(MLX_NAME) -lXext -lX11 -lm -lz
-ALL_FLAGS = $(CFLAGS) $(INC_FLAGS)
-# NAME = XXXXXX
+# GENERAL SETTINGS ====================================================================
+# NAME = <NAME OF YOUR PROGRAM>
 LIB_NAME = lib_improved
 MLX_NAME = mlx_linux
-# .SILENT:
+.SILENT:
 
-# COMPONENTS =============================================================================
-COMPONENTS :=	XXXXXX \
-				XXXXXX
+# DIRECTORIES==========================================================================
+DIR_SRC		:= sources/
+DIR_INC 	:= includes/
+DIR_BUILD	:= .build/
 
-# FUNCTIONS ==============================================================================
+DIR_LIB		:= $(LIB_NAME)/
+DIR_INC_LIB	:= $(DIR_LIB)include/
+
+DIR_MLX 	:= $(MLX_NAME)/
+
+# FLAGS & COMPILATOR SETTINGS =========================================================
+CC 			:= cc
+DEPS_FLAGS  := -MMD -MP
+WARN_FLAGS	:= -Wall -Werror -Wextra
+C_FLAGS		:= $(WARN_FLAGS) $(DEPS_FLAGS)
+INC_FLAGS 	:= -I$(DIR_INC) -I$(DIR_INC_LIB) -I/usr/include -I$(MLX_NAME)
+LIB_FLAGS	:= -L$(DIR_LIB) -l_improved
+MLX_FLAGS	:= -L$(MLX_NAME) -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz
+
+
+COMP 		:= $(CC) $(C_FLAGS) $(INC_FLAGS)
+LINK		:= $(LIB_FLAGS) $(MLX_FLAGS)
+
+ANTI_RELINK	:= Makefile $(DIR_INC) $(DIR_INC_LIB) 
+
+# FUNCTIONS ===========================================================================
 define generate_var_sources_dir
-DIR_$(1) = $$(addprefix $$(DIR_SRC), $(shell echo $(1) | tr '[:upper:]' '[:lower:]')/)
+DIR_$(1) = $(addprefix $(DIR_SRC), $(shell echo $(1) | tr '[:upper:]' '[:lower:]')/)
 endef
 
 define generate_var_sources
-SRC_$(1) = $$(addprefix $$(DIR_$(1)),$$(F_$(1)))
+SRC_$(1) = $(addprefix $(DIR_$(1)),$(F_$(1)))
 endef
 
 define generate_var_objects
-OBJ_$(1) = $$(patsubst $$(DIR_SRC)%.c,$$(DIR_OBJ)%.o,$$(SRC_$(1)))
+OBJS_$(1) = $(patsubst $(DIR_SRC)%.c,$(DIR_BUILD)%.o,$(SRC_$(1)))
 endef
 
-# FILES ==================================================================================
+define generate_var_deps
+DEPS_$(1) = $(patsubst $(DIR_SRC)%.c,$(DIR_BUILD)%.d,$(SRC_$(1)))
+endef
 
-F_LIB = $(addsuffix .a, $(LIB_NAME))
+# COMPONENTS ==========================================================================
+# COMPONENTS :=	XXXXXXX\
 
+# FILES ===============================================================================
 F_MAIN :=		main.c
 
-F_XXXXX :=		xxxxx.c
-
-# DIR ==================================================================================
-DIR_INC = includes/
-DIR_LIB = $(LIB_NAME)/
-DIR_MLX = $(MLX_NAME)/
-DIR_LIB_INC = $(addprefix $(DIR_LIB), $(DIR_INC))
-DIR_SRC = sources/
-DIR_OBJ = .objects/
+# VARS GENERATION =====================================================================
 $(foreach comp,$(COMPONENTS),$(eval $(call generate_var_sources_dir,$(comp))))
-
-# INCLUDE ==============================================================================
-INCLUDE_HDR = $(addprefix $(DIR_INC),$(F_INC))
-INCLUDE_LIB = $(addprefix $(DIR_LIB),$(F_LIB))
-INCLUDE_LIB_HDR = $(addprefix $(DIR_LIB), $(addsuffix .h, $(subst -,_,$(LIB_NAME))))
-
-# SOURCES =============================================================================
 $(foreach comp,$(COMPONENTS),$(eval $(call generate_var_sources,$(comp))))
-
-
-# OBJECTS =============================================================================
 $(foreach comp,$(COMPONENTS),$(eval $(call generate_var_objects,$(comp))))
+$(foreach comp,$(COMPONENTS),$(eval $(call generate_var_deps,$(comp))))
 
-OBJECTS := 	$(foreach comp, $(COMPONENTS), $(OBJ_$(comp))) \
-			$(DIR_OBJ)main.o
+OBJS := $(foreach comp, $(COMPONENTS), $(OBJS_$(comp))) \
+		$(DIR_BUILD)main.o
 
-$(DIR_OBJ):
-	mkdir -p $@
+DEPS := $(foreach comp, $(COMPONENTS), $(DEPS_$(comp))) \
+		$(DIR_BUILD)main.d
 
-$(DIR_OBJ)%.o: $(DIR_SRC)%.c $(DIR_INC)* $(DIR_LIB_INC)*
-	mkdir -p $(dir $@)
-	$(CC) $(ALL_FLAGS) -c $<  -o $@
+# COMPILATION =========================================================================
+$(NAME) : $(OBJS)
+	$(COMP) $^ -o $@ $(LINK)
+	@echo ✨ $(NAME) compiled ✨
+
+$(DIR_BUILD) :
+	@mkdir -p $(DIR_BUILD)
+
+$(DIR_BUILD)%.o : $(DIR_SRC)%.c $(ANTI_RELINK) | $(DIR_BUILD)
+	@mkdir -p $(dir $@)
+	$(COMP) -c $< -o $@
+
+
+-include $(DEPS)
 
 # RULES ===============================================================================
-# make --------------------------------------------------------------------------------
+# build -------------------------------------------------------------------------------
 all : lib mlx $(NAME)
 
 lib :
-	make -C $(DIR_LIB)
-	@echo ✨ $(LIB_NAME) compiled ✨
+	@make -s -C $(DIR_LIB)
 
 mlx :
-	make -C $(DIR_MLX)
-	@echo ✨ $(MLX_NAME) compiled ✨
+	@make -s -C $(DIR_MLX)
 
-$(NAME): $(DIR_OBJ) $(OBJECTS) $(DIR_LIB)$(F_LIB)
-	$(CC) $(ALL_FLAGS) -o $@ $(OBJECTS) -L$(DIR_LIB) -l$(patsubst lib%.a,%,$(F_LIB)) $(MLX_INC)
-	@echo ✨ $(NAME) compiled ✨
-
+# clean -------------------------------------------------------------------------------
 clean:
-	make clean -C $(DIR_LIB)
-	make clean -C $(DIR_MLX)
-	rm -rf $(DIR_OBJ)
+	@make -s clean -C $(DIR_LIB)
+	@make -s clean -C $(DIR_MLX)
+	@rm -rf $(DIR_BUILD)
 
 fclean: clean
-	make fclean -C $(DIR_LIB)
-	make clean -C $(DIR_MLX)
-	rm -f $(NAME)
+	@make -s fclean -C $(DIR_LIB)
+	@rm -f $(NAME)
 	
 re: fclean all
 
-# debug --------------------------------------------------------------------------------
+.DEFAULT_GOAL = all
 
+# debug -------------------------------------------------------------------------------
 print-%:
 	@echo $($(patsubst print-%,%,$@))
 
-.DEFAULT_GOAL = all
-
-.PHONY: all clean fclean re print-%
+.PHONY: all lib mlx clean fclean re print-%
