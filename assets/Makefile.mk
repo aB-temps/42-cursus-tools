@@ -4,8 +4,8 @@ LIB_NAME = lib_improved
 .SILENT:
 
 # DIRECTORIES==========================================================================
-DIR_SRC		:= src/
-DIR_INC 	:= include/
+DIR_SRC		:= sources/
+DIR_INC 	:= includes/
 DIR_BUILD	:= .build/
 
 DIR_LIB		:= $(LIB_NAME)/
