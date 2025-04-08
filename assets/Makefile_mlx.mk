@@ -10,7 +10,7 @@ DIR_INC 	:= includes/
 DIR_BUILD	:= .build/
 
 DIR_LIB		:= $(LIB_NAME)/
-DIR_INC_LIB	:= $(DIR_LIB)include/
+DIR_INC_LIB	:= $(DIR_LIB)includes/
 
 DIR_MLX 	:= $(MLX_NAME)/
 

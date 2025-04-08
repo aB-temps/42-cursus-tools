@@ -76,7 +76,7 @@ create_project_and_alias() {
 				mv ${full_path}/${mk} ${full_path}/Makefile 
 				cd ${full_path} && git clone git@github.com:aB-temps/lib_improved.git
 				cd lib_improved && rm -rf .git
-				echo ".objects/\\nlib_improved/\\n$project_name" >$full_path/.gitignore
+				echo ".build/\\nlib_improved/\\n$project_name" >$full_path/.gitignore
 			fi
 		fi
 
