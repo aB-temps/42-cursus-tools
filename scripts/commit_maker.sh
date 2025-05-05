@@ -19,19 +19,26 @@ selected=0
 
 # FUNC ================================================================
 print_box() {
-  local size=${#1}
-  local text=$1
-  local bc=$2
-  local tc=$3
-  echo -en "$bc╔"
+  local args=("$@")
+  local color=${args[-1]}
+  unset 'args[-1]'
+  local size=0
+
+  for arg in "${args[@]}"; do
+    size=$((size + ${#arg} + 1))
+  done
+  size=$((size - 1))
+  echo -en "$color╔"
   for ((i = 0; i < size + 2; i++)); do
     echo -n ═
   done
   echo -e "╗$reset"
-  echo -en "$bc║ $reset"
-  echo -en "$tc$text$reset"
-  echo -e " $bc║$reset"
-  echo -en "$bc╚"
+  echo -en "$color║ $reset"
+  for arg in "${args[@]}"; do
+    echo -en "$color$arg"
+  done
+  echo -e "$color ║$reset"
+  echo -en "$color╚"
   for ((i = 0; i < size + 2; i++)); do
     echo -n ═
   done
@@ -45,13 +52,13 @@ clear_and_print() {
 
 commit_prev() {
   clear_and_print "$welcome"
-  print_box $1 $2 $3
+  print_box $1 $2
   echo
 }
 
 print_menu() {
   clear_and_print "$welcome"
-  print_box "Use ↑/↓ to choose, Enter to select:" $dim $dim
+  print_box "Use ↑/↓ to choose, Enter to select:" $dim
   echo
   tput civis
   for i in "${!types[@]}"; do
@@ -90,7 +97,7 @@ emoji=${emojis[$selected]}
 message="$type"
 
 tput reset
-commit_prev $message $white $bold$cyan
+commit_prev $message $dim$cyan
 echo -e "$green>$reset Type : $green$type$reset"
 echo -ne "$cyan>$reset Scope : $cyan"
 
@@ -103,7 +110,7 @@ else
   message+="($scope):"
 fi
 
-commit_prev $message $white $bold$cyan
+commit_prev $message $dim$cyan
 echo -e "$green>$reset Type : $green$type$reset"
 if [[ -z $scope ]]; then
   echo -e "$red>$reset Scope : {$dim}no scope$reset"
@@ -120,7 +127,7 @@ while [[ -z $desc ]]; do
 done
 echo -e "$reset\n"
 message+=$desc
-commit_prev $message $white $bold$cyan
+commit_prev $message $dim$cyan
 echo -e "$green>$reset Type : $green$type$reset"
 if [[ -z $scope ]]; then
   echo -e "$red>$reset Scope : {$dim}no scope$reset"
@@ -150,7 +157,7 @@ while [[ $conf != "y" && $conf != "n" ]]; do
 done
 echo
 if [[ $conf == 'n' ]]; then
-  echo -e "❌ Commit aborted ❌\n"
+  echo -e "❌ ${red}Commit aborted${reset} ❌\n"
 else
   echo -e "git commit -m \"$full_message\"\n"
 fi
