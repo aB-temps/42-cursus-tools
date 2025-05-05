@@ -10,9 +10,9 @@ bold="\e[1m"
 dim="\e[2m"
 underline="\e[4m"
 
-welcome="⚡️ $bold Weclome to $cyan commit_maker$reset ⚡️\n"
-types=("feat" "fix" "style" "structure" "refacto" "merge" "doc")
-emojis=("✨" "🔧" "🎨" "🏗️" "♻️" "🔀" "📝")
+welcome="⚡️ ${bold}Weclome to ${cyan}commit_maker$reset ⚡️\n"
+types=("new" "fix" "refactor" "structure" "style" "merge" "doc")
+emojis=("✨" "🔧" "♻️ " "🏗️ " "🎨" "🔀" "📝")
 selected=0
 
 print_box() {
@@ -36,7 +36,7 @@ print_box() {
 }
 
 clear_and_print() {
-  clear -x
+  clear
   echo -e $1
 }
 
@@ -101,7 +101,7 @@ fi
 commit_prev $message $white $bold$cyan
 echo -e "$green>$reset Type : $green$type$reset"
 if [[ -z $scope ]]; then
-  echo -e "$red>$reset Scope : $dim no scope$reset"
+  echo -e "$red>$reset Scope : {$dim}no scope$reset"
 else
   echo -e "$green>$reset Scope : $green$scope$reset"
 fi
@@ -113,7 +113,39 @@ while [[ -z $desc ]]; do
   echo -ne "$cyan>$reset Description : $cyan"
   read desc
 done
-echo -e $reset
+echo -e "$reset\n"
 message+=$desc
+commit_prev $message $white $bold$cyan
+echo -e "$green>$reset Type : $green$type$reset"
+if [[ -z $scope ]]; then
+  echo -e "$red>$reset Scope : {$dim}no scope$reset"
+else
+  echo -e "$green>$reset Scope : $green$scope$reset"
+fi
+echo -e "$green>$reset Description : $green$desc$reset\n$dim"
+echo -e "Press Enter to contiue ...$reset"
+tput civis
 
-commit_prev $message
+read -rsn1 key
+while [[ $key != "" ]]; do
+  read -rsn1 key
+done
+tput reset
+
+#CONFIRM
+echo -e $welcome
+
+full_message="$emoji $message"
+echo -e "$full_message\n"
+echo -ne "Confirm commit message [${green}y$reset/${red}n$reset] : "
+read -n1 conf
+while [[ $conf != "y" && $conf != "n" ]]; do
+  echo -ne "Confirm commit message [${green}y$reset/${red}n$reset] : "
+  read -n1 conf
+done
+echo
+if [[ $conf == 'n' ]]; then
+  echo -e "❌ Commit aborted ❌\n"
+else
+  echo -e "git commit -m \"$full_message\"\n"
+fi
