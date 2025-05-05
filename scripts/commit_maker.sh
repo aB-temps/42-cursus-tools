@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# COLORS ==============================================================
 reset="\e[0m"
 red="\e[31m"
 green="\e[32m"
@@ -10,11 +11,13 @@ bold="\e[1m"
 dim="\e[2m"
 underline="\e[4m"
 
+# VAR =================================================================
 welcome="⚡️ ${bold}Weclome to ${cyan}commit_maker$reset ⚡️\n"
 types=("new" "fix" "refactor" "structure" "style" "merge" "doc")
 emojis=("✨" "🔧" "♻️ " "🏗️ " "🎨" "🔀" "📝")
 selected=0
 
+# FUNC ================================================================
 print_box() {
   local size=${#1}
   local text=$1
@@ -60,9 +63,11 @@ print_menu() {
   done
 }
 
-# START
+# =====================================================================
+# START ---------------------------------------------------------------
+# =====================================================================
 
-# DEFINE TYPE
+# DEFINE TYPE =========================================================
 while true; do
   print_menu
   read -rsn1 key
@@ -89,7 +94,7 @@ commit_prev $message $white $bold$cyan
 echo -e "$green>$reset Type : $green$type$reset"
 echo -ne "$cyan>$reset Scope : $cyan"
 
-# DEFINE SCOPE
+# DEFINE SCOPE ========================================================
 read scope
 echo -e $reset
 if [[ -z $scope ]]; then
@@ -106,7 +111,7 @@ else
   echo -e "$green>$reset Scope : $green$scope$reset"
 fi
 
-# DEFINE DESC
+# DEFINE DESC =========================================================
 echo -ne "$cyan>$reset Description : $cyan"
 read desc
 while [[ -z $desc ]]; do
@@ -132,7 +137,7 @@ while [[ $key != "" ]]; do
 done
 tput reset
 
-#CONFIRM
+#CONFIRM ==============================================================
 echo -e $welcome
 
 full_message="$emoji $message"
