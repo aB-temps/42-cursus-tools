@@ -25,7 +25,7 @@ clear_and_print() {
 
 commit_prev() {
   clear_and_print "$welcome"
-  echo -e "➡️   [${bold}$1$2${reset}]\n"
+  echo -e "${dim}Commit preview →${reset} \" ${bold}$1$2${reset} \"\n"
 }
 
 print_menu() {
@@ -34,7 +34,7 @@ print_menu() {
   echo
   for i in "${!types[@]}"; do
     if [[ $i -eq $selected ]]; then
-      echo -e "$bold$cyan> ${types[$i]}${reset}"
+      echo -e "${bold}${cyan}► ${types[$i]}${reset}"
     else
       echo "  ${types[$i]}"
     fi
@@ -69,9 +69,9 @@ emoji=${emojis[$selected]}
 message="$emoji $type"
 
 tput reset
-commit_prev $green "$message ${dim}${cyan}..."
-echo -e "$green>${reset} Type : $green$type${reset}"
-echo -ne "$cyan>${reset} Scope : $cyan"
+commit_prev "${green}" "$message ${reset}${dim}..."
+echo -e "${green}✓${reset} Type : ${green}$type${reset}"
+echo -ne "$cyan►${reset} Scope : $cyan"
 
 # DEFINE SCOPE ========================================================
 read scope
@@ -82,29 +82,29 @@ else
   message+="($scope): "
 fi
 
-commit_prev $green "$message ${dim}${cyan}..."
-echo -e "$green>${reset} Type : $green$type${reset}"
+commit_prev "${green}" "$message ${reset}${dim}..."
+echo -e "${green}✓${reset} Type : ${green}$type${reset}"
 if [[ -z $scope ]]; then
-  echo -e "$red>${reset} Scope : ${dim}no scope${reset}"
+  echo -e "$red✓${reset} Scope : ${dim}no scope${reset}"
 else
-  echo -e "$green>${reset} Scope : $green$scope${reset}"
+  echo -e "${green}✓${reset} Scope : ${green}$scope${reset}"
 fi
 
 # DEFINE DESC =========================================================
 while [[ -z $desc ]]; do
-  echo -ne "$cyan>${reset} Description : $cyan"
+  echo -ne "$cyan►${reset} Description : $cyan"
   read desc
 done
 echo -e "${reset}\n"
 message+="$desc"
-commit_prev $green "$message"
-echo -e "$green>${reset} Type : $green$type${reset}"
+commit_prev "${green}" "$message"
+echo -e "${green}✓${reset} Type : ${green}$type${reset}"
 if [[ -z $scope ]]; then
-  echo -e "$red>${reset} Scope : ${dim}no scope${reset}"
+  echo -e "$red✓${reset} Scope : ${dim}no scope${reset}"
 else
-  echo -e "$green>${reset} Scope : $green$scope${reset}"
+  echo -e "${green}✓${reset} Scope : ${green}$scope${reset}"
 fi
-echo -e "$green>${reset} Description : $green$desc${reset}\n$dim"
+echo -e "${green}✓${reset} Description : ${green}$desc${reset}\n$dim"
 echo -e "Press Enter to contiue ...${reset}"
 tput civis
 
@@ -115,16 +115,19 @@ done
 tput reset
 
 #CONFIRM ==============================================================
-echo -e $welcome
+clear_and_print "$welcome"
 
-commit_prev $green "$message"
+commit_prev "${green}" "$message"
 while [[ $conf != "y" && $conf != "n" ]]; do
-  echo -ne "Confirm commit message [${green}y${reset}/${red}n${reset}] : "
+  echo -ne "⚠️  Confirm commit message [${green}y${reset}/${red}n${reset}] : "
   read -n1 conf
   echo -e "${reset}\n"
 done
 if [[ $conf == 'n' ]]; then
   echo -e "❌ ${red}Commit aborted${reset} ❌\n"
 else
+  clear_and_print "$welcome"
+  echo -e "✅  ${green}Confirmed commit message${reset} ✅"
   echo -e "git commit -m \"$message\"\n"
 fi
+
