@@ -13,8 +13,8 @@ underline="\e[4m"
 
 # VAR =================================================================
 welcome="⚡️ ${bold}Weclome to ${cyan}commit_maker${reset} ⚡️\n"
-types=("new" "fix" "refactor" "structure" "style" "merge" "doc")
-emojis=("✨" "🔧" "♻️ " "🏗️ " "🎨" "🔀" "📝")
+types=("new" "fix" "refactor" "structure" "style" "merge" "doc" "finish")
+emojis=("✨" "🔧" "♻️ " "🏗️ " "🎨" "🔀" "📝" "🚀")
 selected=0
 
 # FUNC ================================================================
@@ -105,9 +105,9 @@ else
   echo -e "${green}✓${reset} Scope : ${green}$scope${reset}"
 fi
 echo -e "${green}✓${reset} Description : ${green}$desc${reset}\n$dim"
+
 echo -e "Press Enter to contiue ...${reset}"
 tput civis
-
 read -rsn1 key
 while [[ $key != "" ]]; do
   read -rsn1 key
@@ -127,7 +127,21 @@ if [[ $conf == 'n' ]]; then
   echo -e "❌ ${red}Commit aborted${reset} ❌\n"
 else
   clear_and_print "$welcome"
-  echo -e "✅  ${green}Confirmed commit message${reset} ✅"
-  echo -e "git commit -m \"$message\"\n"
+  echo -e "✅ ${green}Confirmed commit message${reset} ✅\n"
+  echo -e "${dim}Press Enter to contiue ...${reset}"
+  tput civis
+  read -rsn1 key
+  while [[ $key != "" ]]; do
+    read -rsn1 key
+  done
+  tput reset
+  clear_and_print "$welcome"
+  echo -ne "🛤️  Path to the .git ? ${dim}[default = ./]${reset} : "
+  read path
+  if [[ -z $path ]]; then
+    path="$PWD/"
+  fi
+  cd $path
+  git add *
+  git commit -m "$message"
 fi
-
