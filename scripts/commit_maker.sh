@@ -9,10 +9,10 @@ white="\e[39m"
 cyan="\e[96m"
 bold="\e[1m"
 dim="\e[2m"
-underline="\e[4m"
 
 # VAR =================================================================
-welcome="⚡️ ${bold}Weclome to ${cyan}commit_maker${reset} ⚡️\n"
+welcome="⚡️ ${bold}${cyan}Weclome to ${white}commit_maker${reset} ⚡️\n"
+header="⚡️ ${bold}${white}commit_maker${reset} ⚡️\n"
 types=("new" "fix" "refactor" "structure" "style" "merge" "doc" "finish")
 emojis=("✨" "🔧" "♻️ " "🏗️ " "🎨" "🔀" "📝" "🚀")
 selected=0
@@ -24,7 +24,7 @@ clear_and_print() {
 }
 
 commit_prev() {
-  clear_and_print "$welcome"
+  clear_and_print "$header"
   echo -e "${dim}Commit preview →${reset} \" ${bold}$1$2${reset} \"\n"
 }
 
@@ -41,11 +41,19 @@ print_menu() {
   done
 }
 
+reset_tput() {
+  clear_and_print "$header"
+  echo -e "❌ ${red}Commit aborted${reset} ❌\n"
+  tput cnorm
+  exit 1
+}
+
 # =====================================================================
 # START ---------------------------------------------------------------
 # =====================================================================
 
 # DEFINE TYPE =========================================================
+trap reset_tput SIGINT
 tput civis
 while true; do
   print_menu
@@ -59,7 +67,7 @@ while true; do
   elif [[ $key == "" ]]; then
     break
   fi
-
+  # first + upArrow = last & last + downArrow = first
   ((selected < 0)) && selected=$((${#types[@]} - 1))
   ((selected >= ${#types[@]})) && selected=0
 done
@@ -68,7 +76,7 @@ type=${types[$selected]}
 emoji=${emojis[$selected]}
 message="$emoji $type"
 
-tput reset
+tput cnorm
 commit_prev "${green}" "$message ${reset}${dim}..."
 echo -e "${green}✓${reset} Type : ${green}$type${reset}"
 echo -ne "$cyan►${reset} Scope : $cyan"
@@ -112,10 +120,10 @@ read -rsn1 key
 while [[ $key != "" ]]; do
   read -rsn1 key
 done
-tput reset
+tput cnorm
 
 #CONFIRM ==============================================================
-clear_and_print "$welcome"
+clear_and_print "$header"
 
 commit_prev "${green}" "$message"
 while [[ $conf != "y" && $conf != "n" ]]; do
@@ -126,7 +134,7 @@ done
 if [[ $conf == 'n' ]]; then
   echo -e "❌ ${red}Commit aborted${reset} ❌\n"
 else
-  clear_and_print "$welcome"
+  clear_and_print "$header"
   echo -e "✅ ${green}Confirmed commit message${reset} ✅\n"
   echo -e "${dim}Press Enter to contiue ...${reset}"
   tput civis
@@ -134,8 +142,8 @@ else
   while [[ $key != "" ]]; do
     read -rsn1 key
   done
-  tput reset
-  clear_and_print "$welcome"
+  tput cnorm
+  clear_and_print "$header"
   echo -ne "🛤️  Path to the .git ? ${dim}[default = ./]${reset} : "
   read path
   if [[ -z $path ]]; then
