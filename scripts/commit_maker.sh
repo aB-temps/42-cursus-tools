@@ -23,9 +23,9 @@ clear_and_print() {
   echo -e $1
 }
 
-commit_prev() {
+commit_preview() {
   clear_and_print "$header"
-  echo -e "${dim}Commit preview →${reset} \" ${bold}$1$2${reset} \"\n"
+  echo -e "${dim}Preview →${reset} \" $1$2${reset} \"\n"
 }
 
 print_menu() {
@@ -71,13 +71,13 @@ while true; do
   ((selected < 0)) && selected=$((${#types[@]} - 1))
   ((selected >= ${#types[@]})) && selected=0
 done
+tput cnorm
 
 type=${types[$selected]}
 emoji=${emojis[$selected]}
 message="$emoji $type"
 
-tput cnorm
-commit_prev "${green}" "$message ${reset}${dim}..."
+commit_preview "${yellow}" "$message ${reset}${dim}..."
 echo -e "${green}✓${reset} Type : ${green}$type${reset}"
 echo -ne "$cyan►${reset} Scope : $cyan"
 
@@ -90,7 +90,7 @@ else
   message+="($scope): "
 fi
 
-commit_prev "${green}" "$message ${reset}${dim}..."
+commit_preview "${yellow}" "$message ${reset}${dim}..."
 echo -e "${green}✓${reset} Type : ${green}$type${reset}"
 if [[ -z $scope ]]; then
   echo -e "$red✓${reset} Scope : ${dim}no scope${reset}"
@@ -105,7 +105,7 @@ while [[ -z $desc ]]; do
 done
 echo -e "${reset}\n"
 message+="$desc"
-commit_prev "${green}" "$message"
+commit_preview "${yellow}" "$message"
 echo -e "${green}✓${reset} Type : ${green}$type${reset}"
 if [[ -z $scope ]]; then
   echo -e "$red✓${reset} Scope : ${dim}no scope${reset}"
@@ -123,9 +123,7 @@ done
 tput cnorm
 
 #CONFIRM ==============================================================
-clear_and_print "$header"
-
-commit_prev "${green}" "$message"
+commit_preview "${green}" "$message"
 while [[ $conf != "y" && $conf != "n" ]]; do
   echo -ne "⚠️  Confirm commit message [${green}y${reset}/${red}n${reset}] : "
   read -n1 conf
@@ -151,5 +149,5 @@ else
   fi
   cd $path
   git add *
-  git commit -m "$message"
+  git commit -m "$message" --quiet
 fi
