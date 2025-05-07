@@ -13,7 +13,7 @@ dim="\e[2m"
 # VAR =================================================================
 welcome="⚡️ ${bold}${cyan}Weclome to ${white}commit_maker${reset} ⚡️\n"
 header="⚡️ ${bold}${white}commit_maker${reset} ⚡️\n"
-types=("new" "fix" "refactor" "structure" "style" "merge" "doc" "finish")
+types=("feat" "fix" "refactor" "structure" "style" "merge" "doc" "finish")
 emojis=("✨" "🔧" "♻️ " "🏗️ " "🎨" "🔀" "📝" "🚀")
 selected=0
 
@@ -30,6 +30,7 @@ commit_preview() {
 
 print_menu() {
   clear_and_print "$welcome"
+  echo -e "${bold}Choose a type of modification${reset}"
   echo -e "${dim}Use ↑/↓ to choose, Enter to select:${reset}"
   echo
   for i in "${!types[@]}"; do
@@ -148,6 +149,5 @@ else
     path="$PWD/"
   fi
   cd $path
-  git add *
   git commit -m "$message" --quiet
 fi
