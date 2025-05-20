@@ -13,8 +13,8 @@ dim="\e[2m"
 # VAR =================================================================
 welcome="⚡️ ${bold}${cyan}Weclome to ${white}commit_maker${reset} ⚡️\n"
 header="⚡️ ${bold}${white}commit_maker${reset} ⚡️\n"
-types=("feat" "fix" "refactor" "structure" "style" "merge" "doc" "finish")
-emojis=("✨" "🔧" "♻️ " "🏗️ " "🎨" "🔀" "📝" "🚀")
+types=("feat" "fix" "test" "refactor" "structure" "style" "merge" "doc" "finish")
+emojis=("✨" "🔧" "🧪" "♻️ " "🏗️ " "🎨" "🔀" "📝" "🚀")
 selected=0
 
 # FUNC ================================================================
