@@ -3,16 +3,9 @@
 create_project_and_alias() {
 	local projects_dir="$HOME/projects"
 
-	#milestone?
-	echo -n "➡️  Milestone :  "
-	read project_milestone
-	if [[ ! $project_milestone =~ ^[0-9]+$ ]]; then
-		echo "❌ Error: Project milestone must be a positive integer. ❌"
-		return 1
-	fi
-
 	#project name?
-	echo -n "➡️  Name :  "
+	tput clear
+	echo -n "\n➡️  Name :  "
 	read project_name
 	if [[ -z $project_name ]]; then
 		echo "❌ Error: Project name cannot be empty. ❌"
@@ -27,8 +20,18 @@ create_project_and_alias() {
 		return 1
 	fi
 
-	#mlx?
+	#lib?
 	if [[ $archi = "y" ]]; then
+		echo -n "➡️  Are you building a library ? [y/n] ? "
+		read lib
+		if [[ $lib != "y" && $lib != "n" ]]; then
+			echo "❌ Error: just say [y]es or [n]o. ❌"
+			return 1
+		fi
+	fi
+
+	#mlx?
+	if [[ $archi = "y" ]] && [[ $lib = "n" ]]; then
 		echo -n "➡️  Do you need the MiniLibX ? [y/n] ? "
 		read mlx
 		if [[ $mlx != "y" && $mlx != "n" ]]; then
@@ -40,7 +43,7 @@ create_project_and_alias() {
 	echo "\n"
 
 	# Dir vars
-	local dir_name="${project_milestone}-${project_name}"
+	local dir_name="${project_name}"
 	local full_path="${projects_dir}/${dir_name}"
 
 	# Archi vars
@@ -63,8 +66,13 @@ create_project_and_alias() {
 
 		# Build archi if desired
 		if [[ $archi = 'y' ]]; then
-			mkdir -p "$src" && mkdir -p $inc && touch $main && touch $hdr && echo "#include \"${project_name}.h\"\n\nint\tmain(void)\n{\n\n\treturn (0);\n}" >>$main
+			if  [[ $lib = "n" ]]; then
+				mkdir -p "$src" && mkdir -p $inc && touch $main && touch $hdr && echo "#include \"${project_name}.h\"\n\nint\tmain(void)\n{\n\n\treturn (0);\n}" >>$main
+			fi
 			if [[ $? -eq 0 ]]; then
+				if [[ $lib = 'y' ]]; then
+					mk="Makefile_lib.mk"
+				fi
 				if [[ $mlx = 'y' ]]; then
 					cd $full_path && git clone https://github.com/42paris/minilibx-linux.git
 					mv minilibx-linux mlx_linux
